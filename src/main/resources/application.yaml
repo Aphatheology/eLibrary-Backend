@@ -5,11 +5,11 @@ spring:
     show-sql: false
     defer-datasource-initialization: true
   datasource:
-    url: #DB_URL
-    username: #DB_USERNAME
-    password: #DB_PASSWORD
+    url: postgres://aphatheology:eWMEyaP1IyGnx5AQsKU61X6s6zxaxpbI@dpg-cm9j1vocmk4c739eul90-a.oregon-postgres.render.com/elibrary_nq4a
+    username: aphatheology
+    password: eWMEyaP1IyGnx5AQsKU61X6s6zxaxpbI
     driver-class-name: org.postgresql.Driver
 app:
   jwt:
-    secret-key: #JWT_SECRET_KEY
-    expiration: #JWT_EXPIRATION
+    secret-key: 38db6e1accdc032398ae46081f8d9c07c7012800e1295180bc96e3763cae4949
+    expiration: '86400000's

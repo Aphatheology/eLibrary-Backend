@@ -41,6 +41,7 @@ public class Users implements UserDetails {
     private Role role;
 
     @Column()
+    @Builder.Default
     private Boolean isVerified = false;
 
     @CreationTimestamp
