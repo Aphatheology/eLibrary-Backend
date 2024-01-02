@@ -30,7 +30,6 @@ public class UserDto {
     @Size(min = 6, max = 20, message = "Invalid password, password must be between 6 to 20 characters")
     @NotBlank(message = "Password can not be blank")
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,20}$", message = "Invalid password, it must have at least one lower case, upper case and number")
-    @JsonIgnore
     private String password;
 
     private String role;
