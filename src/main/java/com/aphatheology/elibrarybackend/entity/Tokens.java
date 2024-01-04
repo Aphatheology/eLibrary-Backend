@@ -11,7 +11,7 @@ import java.time.temporal.ChronoUnit;
 @Data
 @NoArgsConstructor
 public class Tokens {
-    private static final int EXPIRATION_TIME = 24;
+    private static final int EXPIRATION_TIME = 15;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,7 @@ public class Tokens {
     }
 
     private LocalDateTime calculateExpirationTime() {
-        return LocalDateTime.now().plusHours(Tokens.EXPIRATION_TIME);
+        return LocalDateTime.now().plusMinutes(Tokens.EXPIRATION_TIME);
     }
 
     public static boolean isValidToken(LocalDateTime expiryDate) {

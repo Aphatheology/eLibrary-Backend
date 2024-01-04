@@ -18,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -62,20 +61,19 @@ public class AuthService {
                 request.getContextPath();
     }
 
-    public HashMap<String, String> register(UserDto registerBody, HttpServletRequest request) {
+    public AuthenticationResponse register(UserDto registerBody, HttpServletRequest request) {
         Users user = map2Entity(registerBody);
         this.userRepository.save(user);
 
         this.publisher.publishEvent(new RegistrationCompleteEvent(user, getApplicationUrl(request)));
 
-//        var jwtToken = this.jwtService.generateToken(user);
-//        AuthenticationResponse authenticationResponse = AuthenticationResponse.builder().token(jwtToken).build();
-
-        var finalResponse = new HashMap<String, String>();
-
-        finalResponse.put("message", "Registration successful, verification email sent");
-        finalResponse.put("token", this.jwtService.generateToken(user));
-        return finalResponse;
+        return AuthenticationResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullname(user.getFullname())
+                .isVerified(user.getIsVerified())
+                .token(this.jwtService.generateToken(user))
+                .build();
     }
 
     public void saveToken(Users user, String token, String tokenType) {
@@ -132,6 +130,12 @@ public class AuthService {
 
         var jwtToken = this.jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        return AuthenticationResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullname(user.getFullname())
+                .isVerified(user.getIsVerified())
+                .token(jwtToken)
+                .build();
     }
 }
