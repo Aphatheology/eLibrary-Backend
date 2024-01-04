@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -39,8 +37,4 @@ public class AuthController {
     public ResponseEntity<String> resendVerificationToken(@RequestParam("token") String oldToken, final HttpServletRequest request) {
         return new ResponseEntity<>(authService.resendVerificationToken(oldToken, request), HttpStatus.OK);
     }
-
-
-
-
 }
