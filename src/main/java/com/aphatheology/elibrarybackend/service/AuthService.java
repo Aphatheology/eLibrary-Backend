@@ -7,6 +7,7 @@ import com.aphatheology.elibrarybackend.entity.Role;
 import com.aphatheology.elibrarybackend.entity.Tokens;
 import com.aphatheology.elibrarybackend.entity.Users;
 import com.aphatheology.elibrarybackend.event.RegistrationCompleteEvent;
+import com.aphatheology.elibrarybackend.exception.ExistingEmailException;
 import com.aphatheology.elibrarybackend.repository.TokenRepository;
 import com.aphatheology.elibrarybackend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -62,6 +64,10 @@ public class AuthService {
     }
 
     public AuthenticationResponse register(UserDto registerBody, HttpServletRequest request) {
+        Optional<Users> existingUser = this.userRepository.findUserByEmail(registerBody.getEmail());
+
+        if (existingUser.isPresent()) throw new ExistingEmailException("User with this email already exist");
+
         Users user = map2Entity(registerBody);
         this.userRepository.save(user);
 
@@ -73,6 +79,24 @@ public class AuthService {
                 .fullname(user.getFullname())
                 .isVerified(user.getIsVerified())
                 .token(this.jwtService.generateToken(user))
+                .build();
+    }
+
+    public AuthenticationResponse login(LoginDto loginBody) {
+        this.authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginBody.getEmail(), loginBody.getPassword())
+        );
+
+        var user = this.userRepository.findUserByEmail(loginBody.getEmail()).orElseThrow();
+
+        var jwtToken = this.jwtService.generateToken(user);
+
+        return AuthenticationResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .fullname(user.getFullname())
+                .isVerified(user.getIsVerified())
+                .token(jwtToken)
                 .build();
     }
 
@@ -121,21 +145,4 @@ public class AuthService {
         return updatedToken.getToken();
     }
 
-    public AuthenticationResponse login(LoginDto loginBody) {
-        this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginBody.getEmail(), loginBody.getPassword())
-        );
-
-        var user = this.userRepository.findUserByEmail(loginBody.getEmail()).orElseThrow();
-
-        var jwtToken = this.jwtService.generateToken(user);
-
-        return AuthenticationResponse.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .fullname(user.getFullname())
-                .isVerified(user.getIsVerified())
-                .token(jwtToken)
-                .build();
-    }
 }
