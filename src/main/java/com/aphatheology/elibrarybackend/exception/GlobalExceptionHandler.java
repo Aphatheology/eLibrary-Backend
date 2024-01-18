@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
@@ -34,19 +35,16 @@ public class GlobalExceptionHandler {
         if(exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
             errorDetail.setProperty("message", "Incorrect Email or Password");
-        }
-
-        if(exception instanceof AccessDeniedException) {
+        } else if(exception instanceof AccessDeniedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, exception.getMessage());
             errorDetail.setProperty("message", "You are not authorized to access this resource");
-        }
-
-        if(exception instanceof SignatureException) {
+        } else if(exception instanceof HttpMessageNotReadableException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+            errorDetail.setProperty("message", "Request Body cannot be empty");
+        } else if(exception instanceof SignatureException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
             errorDetail.setProperty("message", "Invalid Token");
-        }
-
-        if(exception instanceof ExpiredJwtException) {
+        } else if(exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
             errorDetail.setProperty("message", "Expired token");
         } else {
@@ -76,6 +74,14 @@ public class GlobalExceptionHandler {
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+//    {
+//        "id": 1,
+//            "email": "lagbaja@gmail.com",
+//            "fullname": "Lagbaja Person",
+//            "isVerified": true,
+//            "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJsYWdiYWphQGdtYWlsLmNvbSIsImlhdCI6MTcwNTU3ODE3NCwiZXhwIjoxNzA1NTc4MjM0fQ.P0NlTzxecEfCAizz8iJVSa_5pT0hssYy-STgLWDdkubVunvet1H-OdAFY7xQMfs8"
+//    }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();

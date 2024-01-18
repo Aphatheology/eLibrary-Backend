@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -69,5 +70,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception exception) {
             exceptionResolver.resolveException(request, response, null, exception);
         }
+    }
+
+    private void handleInvalidTokenResponse(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setContentType("application/json");
+        response.getWriter().write("{\"message\":\"Unauthorized access. Please Login and provide a valid token.\"}");
     }
 }
