@@ -49,6 +49,9 @@ public class GlobalExceptionHandler {
         if(exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
             errorDetail.setProperty("message", "Expired token");
+        } else {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
+            errorDetail.setProperty("message", "Internal Server Error");
         }
 
         return errorDetail;
@@ -78,6 +81,19 @@ public class GlobalExceptionHandler {
         Map<String, List<String>> errorResponse = new HashMap<>();
         errorResponse.put("errors", errors);
         return errorResponse;
+    }
+
+    @ExceptionHandler(ExistingEmailException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public final ResponseEntity<ErrorMessage> handleExistingEmailException(ExistingEmailException ex, WebRequest request) {
+
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.CONFLICT.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
     }
 
 }
