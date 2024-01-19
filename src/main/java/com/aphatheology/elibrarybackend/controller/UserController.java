@@ -1,8 +1,10 @@
 package com.aphatheology.elibrarybackend.controller;
 
-import com.aphatheology.elibrarybackend.dto.UserDto;
+import com.aphatheology.elibrarybackend.dto.UpdateUserDto;
+import com.aphatheology.elibrarybackend.dto.UserResponseDto;
 import com.aphatheology.elibrarybackend.entity.Users;
 import com.aphatheology.elibrarybackend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,19 +24,19 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or #userId == principal.id")
-    public ResponseEntity<UserDto> getUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable("userId") Long userId) {
         return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAuthority('ADMIN') or #userId == principal.id")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId, @RequestBody() UserDto userBody) {
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UpdateUserDto userBody) {
         return new ResponseEntity<>(userService.updateUser(userId, userBody), HttpStatus.OK);
     }
 

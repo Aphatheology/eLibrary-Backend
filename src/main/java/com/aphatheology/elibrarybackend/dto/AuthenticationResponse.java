@@ -1,5 +1,6 @@
 package com.aphatheology.elibrarybackend.dto;
 
+import com.aphatheology.elibrarybackend.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ public class AuthenticationResponse {
     private Long id;
     private String email;
     private String fullname;
+    private Role role;
     private Boolean isVerified;
     private String token;
 }

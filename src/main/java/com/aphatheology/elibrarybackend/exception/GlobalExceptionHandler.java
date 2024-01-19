@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,7 +31,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {
-        ProblemDetail errorDetail = null;
+        ProblemDetail errorDetail;
 
         if(exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
@@ -47,6 +48,9 @@ public class GlobalExceptionHandler {
         } else if(exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
             errorDetail.setProperty("message", "Expired token");
+        } else if(exception instanceof UsernameNotFoundException) {
+            errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
+            errorDetail.setProperty("message", "User not found");
         } else {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
             errorDetail.setProperty("message", "Internal Server Error");
@@ -74,14 +78,6 @@ public class GlobalExceptionHandler {
                 .stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
-
-//    {
-//        "id": 1,
-//            "email": "lagbaja@gmail.com",
-//            "fullname": "Lagbaja Person",
-//            "isVerified": true,
-//            "token": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJsYWdiYWphQGdtYWlsLmNvbSIsImlhdCI6MTcwNTU3ODE3NCwiZXhwIjoxNzA1NTc4MjM0fQ.P0NlTzxecEfCAizz8iJVSa_5pT0hssYy-STgLWDdkubVunvet1H-OdAFY7xQMfs8"
-//    }
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();

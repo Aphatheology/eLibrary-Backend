@@ -34,17 +34,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final ApplicationEventPublisher publisher;
 
-
-    public UserDto map2Dto(Users user) {
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setEmail(user.getEmail());
-        userDto.setFullname(user.getFullname());
-        userDto.setCreatedAt(user.getCreatedAt());
-        userDto.setUpdatedAt(user.getUpdatedAt());
-        return userDto;
-    }
-
     public Users map2Entity(UserDto userDto) {
         Users user = new Users();
         user.setEmail(userDto.getEmail());
@@ -77,6 +66,7 @@ public class AuthService {
                 .id(user.getId())
                 .email(user.getEmail())
                 .fullname(user.getFullname())
+                .role(user.getRole())
                 .isVerified(user.getIsVerified())
                 .token(this.jwtService.generateToken(user))
                 .build();
@@ -95,6 +85,7 @@ public class AuthService {
                 .id(user.getId())
                 .email(user.getEmail())
                 .fullname(user.getFullname())
+                .role(user.getRole())
                 .isVerified(user.getIsVerified())
                 .token(jwtToken)
                 .build();
