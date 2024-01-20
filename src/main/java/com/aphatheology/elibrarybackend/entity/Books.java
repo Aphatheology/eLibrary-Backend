@@ -28,19 +28,27 @@ public class Books {
     private String author;
 
     @Column(nullable = false)
-    private String category;
-
-    @Column(nullable = false)
     private String year;
 
+    @Column()
+    private String image;
+
+    @Column()
+    private Double averageRating;
+
     @Column(nullable = false)
-    private Integer rating;
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToOne()
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Users uploadedBy;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Feedbacks> feedbacks = new ArrayList<>();
 
     @CreationTimestamp
@@ -50,4 +58,13 @@ public class Books {
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
+
+    public void updateAverageRating() {
+        if (feedbacks.isEmpty()) {
+            this.averageRating = null;
+        } else {
+            double sum = feedbacks.stream().mapToDouble(Feedbacks::getRating).sum();
+            this.averageRating = sum / feedbacks.size();
+        }
+    }
 }

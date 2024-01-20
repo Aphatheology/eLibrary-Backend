@@ -5,6 +5,7 @@ import com.aphatheology.elibrarybackend.dto.UserResponseDto;
 import com.aphatheology.elibrarybackend.entity.Users;
 import com.aphatheology.elibrarybackend.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,13 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")

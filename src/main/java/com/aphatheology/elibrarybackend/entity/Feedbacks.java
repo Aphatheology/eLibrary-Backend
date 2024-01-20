@@ -2,7 +2,6 @@ package com.aphatheology.elibrarybackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,17 +19,19 @@ public class Feedbacks {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(nullable = false)
+    @Column
     private String message;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Users by;
 
-    @ManyToOne()
-    @JoinColumn(name = "book_id")
+    @ManyToOne
+    @JoinColumn(name = "book_id", nullable = false)
     private Books book;
+
+    @Column(nullable = false)
+    private Integer rating;
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
