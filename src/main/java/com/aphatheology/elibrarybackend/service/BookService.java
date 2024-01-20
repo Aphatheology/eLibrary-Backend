@@ -26,7 +26,7 @@ public class BookService {
     private final ModelMapper modelMapper;
     final Slugify slg = Slugify.builder().build();
 
-    public BookResponseDto map2Dto(Books books) {
+    private BookResponseDto map2Dto(Books books) {
         BookResponseDto bookResponseDto = new BookResponseDto();
         bookResponseDto.setId(books.getId());
         bookResponseDto.setTitle(books.getTitle());
@@ -44,7 +44,7 @@ public class BookService {
         return bookResponseDto;
     }
 
-    public Books map2Entity(BookDto bookDto, Users user) {
+    private Books map2Entity(BookDto bookDto, Users user) {
         Books books = new Books();
         books.setAuthor(bookDto.getAuthor());
         books.setTitle(bookDto.getTitle());
@@ -57,7 +57,6 @@ public class BookService {
 
         return books;
     }
-
 
     public List<BookResponseDto> getAllBooks() {
         List<Books> books = bookRepository.findAll();
@@ -79,21 +78,21 @@ public class BookService {
 
         Books books = map2Entity(bookDto, user);
         bookRepository.save(books);
-        return map2Dto(books);
+        return this.map2Dto(books);
     }
 
     public BookResponseDto getBookById(Long bookId) {
         Books book = this.bookRepository.findById(bookId).orElseThrow(() ->
                 new ResourceNotFoundException("Book Not Found"));
 
-        return map2Dto(book);
+        return this.map2Dto(book);
     }
 
     public BookResponseDto getBookBySlug(String slug) {
         Books book = this.bookRepository.findBySlug(slug).orElseThrow(() ->
                 new ResourceNotFoundException("Book Not Found"));
 
-        return map2Dto(book);
+        return this.map2Dto(book);
     }
 
     public BookResponseDto updateBookById(Long bookId, BookDto bookDto, Principal principal) {
@@ -106,11 +105,11 @@ public class BookService {
         this.modelMapper.map(bookDto, book);
         this.bookRepository.save(book);
 
-        return map2Dto(book);
+        return this.map2Dto(book);
     }
 
     public void deleteBook(Long bookId, Principal principal) {
-        Books book = accessUserAndBook(bookId, principal);
+        Books book = this.accessUserAndBook(bookId, principal);
 
         this.bookRepository.delete(book);
     }

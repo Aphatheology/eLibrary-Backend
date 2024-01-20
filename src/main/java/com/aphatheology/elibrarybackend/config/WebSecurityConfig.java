@@ -36,7 +36,7 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/books", "books/*", "books/slug/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/books", "books/*", "books/slug/*", "/feedbacks").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
