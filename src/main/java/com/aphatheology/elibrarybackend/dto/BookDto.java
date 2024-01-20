@@ -36,6 +36,8 @@ public class BookDto {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private String slug;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
 

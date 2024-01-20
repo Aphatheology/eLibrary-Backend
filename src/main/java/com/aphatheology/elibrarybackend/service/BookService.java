@@ -8,10 +8,14 @@ import com.aphatheology.elibrarybackend.repository.BookRepository;
 import com.aphatheology.elibrarybackend.repository.UserRepository;
 import com.github.slugify.Slugify;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +23,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     final Slugify slg = Slugify.builder().build();
 
     public BookResponseDto map2Dto(Books books) {
@@ -47,7 +52,7 @@ public class BookService {
         books.setStatus(bookDto.getStatus());
         books.setYear(bookDto.getYear());
         books.setImage(bookDto.getImage());
-        books.setSlug(slg.slugify(bookDto.getTitle()));
+        books.setSlug(bookDto.getSlug());
         books.setUploadedBy(user);
 
         return books;
@@ -63,6 +68,8 @@ public class BookService {
     public BookResponseDto createBook(BookDto bookDto, Principal principal) {
         Users user = userRepository.findUserByEmail(principal.getName()).orElseThrow(() ->
                 new ResourceNotFoundException("User Not Found"));
+
+        bookDto.setSlug(checkAndCreateSlug(bookDto));
 
         if (user.getRole() == Role.ADMIN) {
             bookDto.setStatus(Status.APPROVED);
@@ -87,5 +94,51 @@ public class BookService {
                 new ResourceNotFoundException("Book Not Found"));
 
         return map2Dto(book);
+    }
+
+    public BookResponseDto updateBookById(Long bookId, BookDto bookDto, Principal principal) {
+        Books book = accessUserAndBook(bookId, principal);
+        if(bookDto.getTitle() != null) {
+            System.out.println("check and create going on");
+            bookDto.setSlug(checkAndCreateSlug(bookDto));
+        }
+
+        this.modelMapper.map(bookDto, book);
+        this.bookRepository.save(book);
+
+        return map2Dto(book);
+    }
+
+    public void deleteBook(Long bookId, Principal principal) {
+        Books book = accessUserAndBook(bookId, principal);
+
+        this.bookRepository.delete(book);
+    }
+
+    private Books accessUserAndBook(Long bookId, Principal principal) {
+        Books book = this.bookRepository.findById(bookId).orElseThrow(() ->
+                new ResourceNotFoundException("Book Not Found"));
+
+        Users user = userRepository.findUserByEmail(principal.getName()).orElseThrow(() ->
+                new ResourceNotFoundException("User Not Found"));
+
+        if (book.getUploadedBy().getId() != user.getId() && user.getRole() != Role.ADMIN ) {
+            throw new AccessDeniedException("Access denied");
+        }
+        return book;
+    }
+
+    private String checkAndCreateSlug(BookDto bookDto) {
+        String slug = slg.slugify(bookDto.getTitle());
+        Optional<Books> book = this.bookRepository.findBySlug(slug);
+
+        if(book.isPresent()) {
+            Random random = new Random();
+            int randomNumber = 100000 + random.nextInt(900000);
+
+            slug += randomNumber;
+        }
+
+        return slug;
     }
 }

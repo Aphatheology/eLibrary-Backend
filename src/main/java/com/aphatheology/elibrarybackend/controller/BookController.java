@@ -34,6 +34,17 @@ public class BookController {
         return new ResponseEntity<>(this.bookService.getBookById(bookId), HttpStatus.OK);
     }
 
+    @PutMapping("/{bookId}")
+    public ResponseEntity<BookResponseDto> updateBookById(@PathVariable("bookId") Long bookId, @RequestBody BookDto bookDto, Principal principal) {
+        return new ResponseEntity<>(this.bookService.updateBookById(bookId, bookDto, principal), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<BookResponseDto> deleteBook(@PathVariable Long bookId, Principal principal) {
+        this.bookService.deleteBook(bookId, principal);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/slug/{slug}")
     public ResponseEntity<BookResponseDto> getBookById(@PathVariable("slug") String slug) {
         return new ResponseEntity<>(this.bookService.getBookBySlug(slug), HttpStatus.OK);
