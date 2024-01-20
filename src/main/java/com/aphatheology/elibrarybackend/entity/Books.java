@@ -24,6 +24,9 @@ public class Books {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Column(nullable = false)
     private String author;
 

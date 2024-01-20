@@ -6,6 +6,7 @@ import com.aphatheology.elibrarybackend.entity.*;
 import com.aphatheology.elibrarybackend.exception.ResourceNotFoundException;
 import com.aphatheology.elibrarybackend.repository.BookRepository;
 import com.aphatheology.elibrarybackend.repository.UserRepository;
+import com.github.slugify.Slugify;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    final Slugify slg = Slugify.builder().build();
 
     public BookResponseDto map2Dto(Books books) {
         BookResponseDto bookResponseDto = new BookResponseDto();
@@ -28,6 +30,7 @@ public class BookService {
         bookResponseDto.setAverageRating(books.getAverageRating());
         bookResponseDto.setStatus(books.getStatus());
         bookResponseDto.setCategory(books.getCategory());
+        bookResponseDto.setSlug(books.getSlug());
         bookResponseDto.setFeedbacks(books.getFeedbacks());
         bookResponseDto.setUploadedBy(books.getUploadedBy().getFullname());
         bookResponseDto.setCreatedAt(books.getCreatedAt());
@@ -44,6 +47,7 @@ public class BookService {
         books.setStatus(bookDto.getStatus());
         books.setYear(bookDto.getYear());
         books.setImage(bookDto.getImage());
+        books.setSlug(slg.slugify(bookDto.getTitle()));
         books.setUploadedBy(user);
 
         return books;
@@ -73,6 +77,13 @@ public class BookService {
 
     public BookResponseDto getBookById(Long bookId) {
         Books book = this.bookRepository.findById(bookId).orElseThrow(() ->
+                new ResourceNotFoundException("Book Not Found"));
+
+        return map2Dto(book);
+    }
+
+    public BookResponseDto getBookBySlug(String slug) {
+        Books book = this.bookRepository.findBySlug(slug).orElseThrow(() ->
                 new ResourceNotFoundException("Book Not Found"));
 
         return map2Dto(book);

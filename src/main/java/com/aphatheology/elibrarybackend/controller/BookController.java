@@ -33,4 +33,9 @@ public class BookController {
     public ResponseEntity<BookResponseDto> getBookById(@PathVariable("bookId") Long bookId) {
         return new ResponseEntity<>(this.bookService.getBookById(bookId), HttpStatus.OK);
     }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<BookResponseDto> getBookById(@PathVariable("slug") String slug) {
+        return new ResponseEntity<>(this.bookService.getBookBySlug(slug), HttpStatus.OK);
+    }
 }

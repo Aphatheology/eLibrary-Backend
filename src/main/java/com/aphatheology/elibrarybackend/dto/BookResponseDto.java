@@ -23,6 +23,7 @@ public class BookResponseDto {
     private String image;
     private Category category;
     private Status status;
+    private String slug;
     private String uploadedBy;
     private Double averageRating;
     private List<Feedbacks> feedbacks;
