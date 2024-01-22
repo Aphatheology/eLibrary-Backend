@@ -18,7 +18,7 @@ public class FeedbackController {
 
     private final FeedbackService feedbackService;
 
-    @PostMapping
+    @PostMapping("/{bookId}")
     public ResponseEntity<FeedbackResponseDto> createFeedback(@RequestBody @Valid FeedbackDto feedbackDto, @PathVariable Long bookId, Principal principal) {
         return new ResponseEntity<>(this.feedbackService.createFeedback(feedbackDto, bookId, principal), HttpStatus.CREATED);
     }

@@ -1,6 +1,7 @@
 package com.aphatheology.elibrarybackend.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -33,10 +34,9 @@ public class Books {
     @Column(nullable = false)
     private String year;
 
-    @Column()
     private String image;
 
-    @Column()
+    @Transient
     private Double averageRating;
 
     @Column(nullable = false)
@@ -51,7 +51,8 @@ public class Books {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Users uploadedBy;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<Feedbacks> feedbacks = new ArrayList<>();
 
     @CreationTimestamp
@@ -62,7 +63,8 @@ public class Books {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    public void updateAverageRating() {
+    @PostLoad
+    public void setAverageRating() {
         if (feedbacks.isEmpty()) {
             this.averageRating = null;
         } else {

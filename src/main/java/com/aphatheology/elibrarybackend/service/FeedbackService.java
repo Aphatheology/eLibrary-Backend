@@ -24,7 +24,7 @@ public class FeedbackService {
     private Feedbacks map2Entity(FeedbackDto feedbackDto, Books books, Users users) {
         Feedbacks feedbacks = new Feedbacks();
         feedbacks.setBook(books);
-        feedbacks.setBy(users);
+        feedbacks.setUser(users);
         feedbacks.setMessage(feedbackDto.getMessage());
         feedbacks.setRating(feedbackDto.getRating());
 
@@ -37,7 +37,7 @@ public class FeedbackService {
         feedbackResponseDto.setId(feedbacks.getId());
         feedbackResponseDto.setMessage(feedbacks.getMessage());
         feedbackResponseDto.setRating(feedbacks.getRating());
-        feedbackResponseDto.setBy(feedbacks.getBy().getFullname());
+        feedbackResponseDto.setBy(feedbacks.getUser().getFullname());
         feedbackResponseDto.setBookId(feedbacks.getBook().getId());
         feedbackResponseDto.setCreatedAt(feedbacks.getCreatedAt());
         feedbackResponseDto.setUpdatedAt(feedbacks.getUpdatedAt());

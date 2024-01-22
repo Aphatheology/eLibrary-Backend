@@ -4,6 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -29,31 +30,66 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ErrorMessage> dataIntegrityViolantionException(final DataIntegrityViolationException e, WebRequest request) {
+        String constraintErrorMessage = e.getMostSpecificCause().getMessage();
+        ErrorMessage message;
+
+        if (constraintErrorMessage.contains("unique_user_book")) {
+            message = new ErrorMessage(
+                    HttpStatus.CONFLICT.value(),
+                    new Date(),
+                    "You've given feedback on this book already. Thanks",
+                    request.getDescription(false));
+        } else {
+            message = new ErrorMessage(
+                    HttpStatus.CONFLICT.value(),
+                    new Date(),
+                    constraintErrorMessage,
+                    request.getDescription(false));
+        }
+
+        return new ResponseEntity<>(message, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleSecurityException(Exception exception) {
         ProblemDetail errorDetail;
+//        ErrorMessage message = null;
 
-        if(exception instanceof BadCredentialsException) {
+        if (exception instanceof BadCredentialsException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
             errorDetail.setProperty("message", "Incorrect Email or Password");
-        } else if(exception instanceof AccessDeniedException) {
+        } else if (exception instanceof AccessDeniedException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, exception.getMessage());
             errorDetail.setProperty("message", "You are not authorized to access this resource");
-        } else if(exception instanceof HttpMessageNotReadableException) {
+        } else if (exception instanceof HttpMessageNotReadableException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
             errorDetail.setProperty("message", "Request Body cannot be empty");
-        } else if(exception instanceof SignatureException) {
+        } else if (exception instanceof SignatureException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
             errorDetail.setProperty("message", "Invalid Token");
-        } else if(exception instanceof ExpiredJwtException) {
+//            message = new ErrorMessage(
+//                    HttpStatus.BAD_REQUEST.value(),
+//                    new Date(),
+//                    "Invalid Token",
+//                    request.getDescription(false));
+            //It will send statusCode of 200
+        } else if (exception instanceof ExpiredJwtException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, exception.getMessage());
             errorDetail.setProperty("message", "Expired token");
-        } else if(exception instanceof UsernameNotFoundException) {
+        } else if (exception instanceof UsernameNotFoundException) {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.getMessage());
             errorDetail.setProperty("message", "User not found");
         } else {
             errorDetail = ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, exception.getMessage());
             errorDetail.setProperty("message", "Internal Server Error");
+//            message = new ErrorMessage(
+//                    HttpStatus.BAD_REQUEST.value(),
+//                    new Date(),
+//                    "Invalid Token",
+//                    request.getDescription(false));
         }
 
         return errorDetail;
