@@ -13,3 +13,5 @@ app:
   jwt:
     secret-key: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION}
+  url:
+    frontend: ${FRONTEND_URL}

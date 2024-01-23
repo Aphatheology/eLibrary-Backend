@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eLibrary by Campipal</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,600" rel="stylesheet" type="text/css">
+
+    <style>
+        
+        html,
+        body {
+            margin: 0 auto !important;
+            padding: 0 !important;
+            height: 100% !important;
+            width: 100% !important;
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 15px;
+            margin-bottom: 10px;
+            line-height: 24px;
+            color:#333333;
+            font-weight: 400;
+        }
+        * {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        table,
+        td {
+            mso-table-lspace: 0pt !important;
+            mso-table-rspace: 0pt !important;
+        }
+        table {
+            border-spacing: 0 !important;
+            border-collapse: collapse !important;
+            table-layout: fixed !important;
+            margin: 0 auto !important;
+        }
+        table table table {
+            table-layout: auto;
+        }
+        a {
+            text-decoration: none;
+        }
+        img {
+            -ms-interpolation-mode:bicubic;
+        }
+        .es-button-border:hover > a.es-button {
+            color:#ffffff!important;
+        }
+    </style>
+
+</head>
+<body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #f5f6fa;">
+	<center style="width: 100%; background-color: #f5f6fa;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#f5f6fa">
+            <tr>
+               <td style="padding: 40px 0;">
+                    <table style="width:100%;max-width:620px;margin:0 auto;">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center; padding-bottom:15px">
+                                    <a href="#"><img style="height: 47px" src="https://ecscwlp.stripocdn.email/content/guids/CABINET_df47fd3c6f0c9b8d38b4cfa1b7dd2036b87c3fe3149d175327d2f937bc53931b/images/campipal.jpg" alt="Campipal Logo"></a>
+                                    <p style="font-size: 14px; color: #0b4681; padding-top: 25px; padding-left: 10%; text-align: left;">Hi <span th:text="${receiverName}"></span></p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style="width:100%;max-width:620px;margin:0 auto;background-color:#ffffff;">
+                        <tbody>
+                            <tr>
+                                <td style="text-align:center;padding: 30px 30px 20px">
+                                    <h5 style="margin-bottom: 24px; color: #36445c; font-size: 20px; font-weight: 400; line-height: 28px;"><span th:text="${contentHeader}"></span></h5>
+                                    <p style="margin-bottom: 15px;"><span th:utext="${content}"></span></p> <br>
+
+                                    <span class="es-button-border" style="border-style:solid; border-color:#2CB543; background:#008036; border-width:0px; display:inline-block; border-radius:6px; width:auto; padding-top:10px; padding-bottom:10px; margin-bottom: 20px">
+                                    <a th:if="${token} && ${appUrl}" th:href="@{${appUrl} + '/auth/verify?token=' + ${token}}" class="es-button" target="_blank"
+                                       style="mso-style-priority:100 !important; text-decoration:none !important;
+                                       cursor: pointer;
+                                       mso-line-height-rule:exactly; color:#FFFFFF; font-size:15px; padding:5px 10px; display:inline-block; background:#008036; border-radius:6px; font-family:arial, 'helvetica neue', helvetica, sans-serif; font-weight:normal; font-style:normal; line-height:24px; width:auto;text-align:center; letter-spacing:0; mso-padding-alt:0;mso-border-alt:10px solid #008036;border-left-width:30px; border-right-width:30px">
+                                        Confirm Your Email
+                                    </a>
+                                    </span>
+
+                                    <p>Thank you for choosing eLibrary by Campipal. <br> Best regards</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style="width:100%;max-width:620px;margin:0 auto;">
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center; padding:45px 40px 0;">
+                                    <p style="font-size: 14px;">Automated Email System <br> info@campipal.com <br> www.campipal.com</p>
+                                    <ul style="margin: 10px -4px 0;padding: 0;">
+                                        <li style="display: inline-block; list-style: none; padding: 4px;"><a style="display: inline-block; height: 30px; width:30px;border-radius: 50%; background-color: #ffffff" href="https://www.instagram.com/campipal"><img style="width: 30px" src="https://ecscwlp.stripocdn.email/content/guids/CABINET_df47fd3c6f0c9b8d38b4cfa1b7dd2036b87c3fe3149d175327d2f937bc53931b/images/instagram.png" alt="Instagram Page"></a></li>
+                                        <li style="display: inline-block; list-style: none; padding: 4px;"><a style="display: inline-block; height: 30px; width:30px;border-radius: 50%; background-color: #ffffff" href="https://twitter.com/campipal"><img style="width: 30px" src="https://ecscwlp.stripocdn.email/content/guids/CABINET_df47fd3c6f0c9b8d38b4cfa1b7dd2036b87c3fe3149d175327d2f937bc53931b/images/twitter.png" alt="Twitter Page"></a></li>
+                                    </ul>
+                                    <p style="padding-top: 15px; font-size: 12px;">This email was sent to you as a registered user of <a style="color: #0b4681; text-decoration:none;" href="https://campipal.com/">eLibrary by Campipal</a>.</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+               </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>
