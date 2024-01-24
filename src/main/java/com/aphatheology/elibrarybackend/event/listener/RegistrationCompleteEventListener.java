@@ -7,7 +7,8 @@ import com.aphatheology.elibrarybackend.service.AuthService;
 import com.aphatheology.elibrarybackend.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -15,13 +16,14 @@ import java.util.UUID;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RegistrationCompleteEventListener implements ApplicationListener<RegistrationCompleteEvent> {
+public class RegistrationCompleteEventListener {
 
     private final AuthService authService;
     private final EmailService emailService;
 
-    @Override
-    public void onApplicationEvent(RegistrationCompleteEvent event) {
+    @Async
+    @EventListener
+    public void handleRegistrationCompleteEvent(RegistrationCompleteEvent event) {
 
         Users user = event.getUser();
         String token = UUID.randomUUID().toString();
