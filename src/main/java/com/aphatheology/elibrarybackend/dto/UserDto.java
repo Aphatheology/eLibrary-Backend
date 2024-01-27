@@ -26,7 +26,7 @@ public class UserDto {
     private String fullname;
 
     @NotBlank(message = "Password can not be blank")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=.*[a-zA-Z\\d@#$%^&+=!]).{8,20}$", message = "Invalid password, it must have at least one lower case, one upper case, one number, one special character, and be between 8 and 20 characters long")
+    @Pattern(regexp = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?([^\\w\\s]|[_])).{8,}$", message = "Invalid password, it must have at least one lower case, one upper case, one number, one special character, and be between 8 and 20 characters long")
     private String password;
 
     private String role;
