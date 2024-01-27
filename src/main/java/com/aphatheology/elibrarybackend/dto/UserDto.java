@@ -1,11 +1,9 @@
 package com.aphatheology.elibrarybackend.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,9 +25,8 @@ public class UserDto {
     @NotBlank(message = "Fullname cannot be blank")
     private String fullname;
 
-    @Size(min = 6, max = 20, message = "Invalid password, password must be between 6 to 20 characters")
     @NotBlank(message = "Password can not be blank")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,20}$", message = "Invalid password, it must have at least one lower case, upper case and number")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])(?=.*[a-zA-Z\\d@#$%^&+=!]).{8,20}$", message = "Invalid password, it must have at least one lower case, one upper case, one number, one special character, and be between 8 and 20 characters long")
     private String password;
 
     private String role;

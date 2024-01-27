@@ -77,7 +77,7 @@
                                     <p style="margin-bottom: 15px;"><span th:utext="${content}"></span></p> <br>
 
                                     <span class="es-button-border" style="border-style:solid; border-color:#2CB543; background:#008036; border-width:0px; display:inline-block; border-radius:6px; width:auto; padding-top:10px; padding-bottom:10px; margin-bottom: 20px">
-                                    <a th:if="${token} && ${appUrl}" th:href="@{${appUrl} + '/auth/verify?token=' + ${token}}" class="es-button" target="_blank"
+                                    <a th:if="${token != null and appUrl != null}" th:href="@{${appUrl} + '/auth/verify?token=' + ${token}}" class="es-button" target="_blank"
                                        style="mso-style-priority:100 !important; text-decoration:none !important;
                                        cursor: pointer;
                                        mso-line-height-rule:exactly; color:#FFFFFF; font-size:15px; padding:5px 10px; display:inline-block; background:#008036; border-radius:6px; font-family:arial, 'helvetica neue', helvetica, sans-serif; font-weight:normal; font-style:normal; line-height:24px; width:auto;text-align:center; letter-spacing:0; mso-padding-alt:0;mso-border-alt:10px solid #008036;border-left-width:30px; border-right-width:30px">
