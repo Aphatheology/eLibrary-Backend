@@ -27,7 +27,8 @@ public class WebSecurityConfig {
 
     private static final String[] WHITELIST = {
             "/",
-            "/auth/*",
+            "/auth/login",
+            "/auth/register",
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/v3/api-docs/**"
@@ -35,8 +36,6 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.cors(AbstractHttpConfigurer::disable);
-//        http.csrf(AbstractHttpConfigurer::disable);
 
         http
                 .cors(AbstractHttpConfigurer::disable)
@@ -44,7 +43,7 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/books", "books/*", "books/slug/*", "/feedbacks").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/books", "books/*", "books/slug/*", "/feedbacks", "/files/*", "/files/*/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

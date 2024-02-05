@@ -108,6 +108,19 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public final ResponseEntity<ErrorMessage> handleBadRequestException(ResourceNotFoundException ex, WebRequest request) {
+
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors()

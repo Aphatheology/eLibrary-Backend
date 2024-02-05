@@ -7,7 +7,9 @@ import com.aphatheology.elibrarybackend.entity.Role;
 import com.aphatheology.elibrarybackend.entity.Tokens;
 import com.aphatheology.elibrarybackend.entity.Users;
 import com.aphatheology.elibrarybackend.event.RegistrationCompleteEvent;
+import com.aphatheology.elibrarybackend.exception.BadRequestException;
 import com.aphatheology.elibrarybackend.exception.ExistingEmailException;
+import com.aphatheology.elibrarybackend.exception.ResourceNotFoundException;
 import com.aphatheology.elibrarybackend.repository.TokenRepository;
 import com.aphatheology.elibrarybackend.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -97,23 +100,25 @@ public class AuthService {
         this.tokenRepository.save(newToken);
     }
 
-    public String verifyToken(String token) {
+    public String verifyToken(String token, Principal principal) {
+        Users user = userRepository.findUserByEmail(principal.getName()).orElseThrow(() ->
+                new ResourceNotFoundException("User Not Found"));
+
         Tokens verificationToken = this.tokenRepository.findByTokenAndTokenType(token, "VERIFICATION");
 
-        if(verificationToken == null) return "Invalid token";
+        if(verificationToken == null) throw new BadRequestException("Invalid token");
 
-        Users user = verificationToken.getUser();
+        Users userFromToken = verificationToken.getUser();
 
-        if(!Tokens.isValidToken(verificationToken.getExpirationTime())) {
-            return "Expired token";
-        }
+        if(!Tokens.isValidToken(verificationToken.getExpirationTime())) throw new BadRequestException("Expired token");
+
+        if (!user.getId().equals(userFromToken.getId())) throw new BadRequestException("Unmatched User. Be logged in to your account for successful verification");
 
         user.setIsVerified(true);
         this.userRepository.save(user);
         this.tokenRepository.delete(verificationToken);
 
         return "Account verified successfully";
-
     }
 
     public String resendVerificationToken(String oldToken, HttpServletRequest request) {

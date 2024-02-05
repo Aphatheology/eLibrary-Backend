@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -29,8 +31,8 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyToken(@RequestParam("token") String token) {
-        return new ResponseEntity<>(authService.verifyToken(token), HttpStatus.OK);
+    public ResponseEntity<String> verifyToken(@RequestParam("token") String token, Principal principal) {
+        return new ResponseEntity<>(authService.verifyToken(token, principal), HttpStatus.OK);
     }
 
     @GetMapping("/resend-verification")
