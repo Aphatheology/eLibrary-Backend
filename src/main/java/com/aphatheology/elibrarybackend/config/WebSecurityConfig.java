@@ -43,7 +43,7 @@ public class WebSecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITELIST).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/books", "books/*", "books/slug/*", "/feedbacks", "/files/*", "/files/*/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/books", "books/*", "books/slug/*", "/feedbacks", "/files/*", "/files/download/*", "/files/id/*", "/files/download/id/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

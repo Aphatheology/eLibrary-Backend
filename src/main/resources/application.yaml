@@ -21,6 +21,7 @@ spring:
           starttls:
             enable: true
 app:
+  env: production
   jwt:
     secret-key: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION}
