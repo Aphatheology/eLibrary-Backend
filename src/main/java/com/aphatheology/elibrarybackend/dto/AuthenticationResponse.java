@@ -16,5 +16,5 @@ public class AuthenticationResponse {
     private String fullname;
     private Role role;
     private Boolean isVerified;
-    private String token;
+    private String accessToken;
 }

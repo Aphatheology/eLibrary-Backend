@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @GetMapping("/resend-verification")
-    public ResponseEntity<String> resendVerificationToken(@RequestParam("token") String oldToken, final HttpServletRequest request) {
-        return new ResponseEntity<>(authService.resendVerificationToken(oldToken, request), HttpStatus.OK);
+    public ResponseEntity<String> resendVerificationToken(Principal principal, final HttpServletRequest request) {
+        return new ResponseEntity<>(authService.resendVerificationToken(principal, request), HttpStatus.OK);
     }
 }

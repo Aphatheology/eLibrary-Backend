@@ -29,6 +29,7 @@ public class RegistrationCompleteEventListener {
         String token = UUID.randomUUID().toString();
 
         this.authService.saveToken(user, token, "VERIFICATION");
+        log.info(token);
 
         EmailPayloadDto emailPayloadDto = new EmailPayloadDto(
                 user.getEmail(),

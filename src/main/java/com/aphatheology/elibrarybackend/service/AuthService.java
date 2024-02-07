@@ -1,6 +1,7 @@
 package com.aphatheology.elibrarybackend.service;
 
 import com.aphatheology.elibrarybackend.dto.AuthenticationResponse;
+import com.aphatheology.elibrarybackend.dto.EmailPayloadDto;
 import com.aphatheology.elibrarybackend.dto.LoginDto;
 import com.aphatheology.elibrarybackend.dto.UserDto;
 import com.aphatheology.elibrarybackend.entity.Role;
@@ -22,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +36,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final ApplicationEventPublisher publisher;
+    private final EmailService emailService;
 
     public Users map2Entity(UserDto userDto) {
         Users user = new Users();
@@ -71,7 +72,7 @@ public class AuthService {
                 .fullname(user.getFullname())
                 .role(user.getRole())
                 .isVerified(user.getIsVerified())
-                .token(this.jwtService.generateToken(user))
+                .accessToken(this.jwtService.generateToken(user))
                 .build();
     }
 
@@ -90,7 +91,7 @@ public class AuthService {
                 .fullname(user.getFullname())
                 .role(user.getRole())
                 .isVerified(user.getIsVerified())
-                .token(jwtToken)
+                .accessToken(jwtToken)
                 .build();
     }
 
@@ -121,11 +122,24 @@ public class AuthService {
         return "Account verified successfully";
     }
 
-    public String resendVerificationToken(String oldToken, HttpServletRequest request) {
-        String token = this.generateNewToken(oldToken, "VERIFICATION");
+    public String resendVerificationToken(Principal principal, HttpServletRequest request) {
+        Users user = userRepository.findUserByEmail(principal.getName()).orElseThrow(() ->
+                new ResourceNotFoundException("User Not Found"));
 
-        if(Objects.equals(token, "Invalid token")) return "Invalid Token";
+        Tokens verificationToken = this.tokenRepository.findByUserIdAndTokenType(user.getId(), "VERIFICATION");
 
+        String token = this.generateNewToken(verificationToken.getToken(), "VERIFICATION");
+
+        EmailPayloadDto emailPayloadDto = new EmailPayloadDto(
+                user.getEmail(),
+                "Account Email Verification",
+                "Account Email Verification",
+                "You've received this message because your email address has been registered with our site. Please click the button below to verify your email address and confirm that you are the owner of this account. <br> If you did not register with us, please disregard this email.",
+                user.getFullname(),
+                "email-verification",
+                token);
+
+        this.emailService.sendEmail(emailPayloadDto);
         String url = this.getApplicationUrl(request) + "/auth/verify?token=" + token;
 
         log.info("Click the url to verify your account: " + url);
