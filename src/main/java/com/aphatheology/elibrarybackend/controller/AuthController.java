@@ -1,5 +1,6 @@
 package com.aphatheology.elibrarybackend.controller;
 
+import com.aphatheology.elibrarybackend.dto.ApiResponse;
 import com.aphatheology.elibrarybackend.dto.AuthenticationResponse;
 import com.aphatheology.elibrarybackend.dto.LoginDto;
 import com.aphatheology.elibrarybackend.dto.UserDto;
@@ -31,12 +32,14 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verifyToken(@RequestParam("token") String token, Principal principal) {
-        return new ResponseEntity<>(authService.verifyToken(token, principal), HttpStatus.OK);
+    public ResponseEntity<ApiResponse> verifyToken(@RequestParam("token") String token, Principal principal) {
+        String response = authService.verifyToken(token, principal);
+        return ResponseEntity.ok(new ApiResponse(true, response, null));
     }
 
     @GetMapping("/resend-verification")
-    public ResponseEntity<String> resendVerificationToken(Principal principal, final HttpServletRequest request) {
-        return new ResponseEntity<>(authService.resendVerificationToken(principal, request), HttpStatus.OK);
+    public ResponseEntity<ApiResponse> resendVerificationToken(Principal principal, final HttpServletRequest request) {
+        String response = authService.resendVerificationToken(principal, request);
+        return ResponseEntity.ok(new ApiResponse(true, response, null));
     }
 }

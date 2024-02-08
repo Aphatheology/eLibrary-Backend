@@ -3,6 +3,7 @@ package com.aphatheology.elibrarybackend.service;
 import com.aphatheology.elibrarybackend.dto.BookDto;
 import com.aphatheology.elibrarybackend.dto.BookResponseDto;
 import com.aphatheology.elibrarybackend.entity.*;
+import com.aphatheology.elibrarybackend.exception.BadRequestException;
 import com.aphatheology.elibrarybackend.exception.ResourceNotFoundException;
 import com.aphatheology.elibrarybackend.repository.BookRepository;
 import com.aphatheology.elibrarybackend.repository.UserRepository;
@@ -65,8 +66,8 @@ public class BookService {
     }
 
     public BookResponseDto createBook(BookDto bookDto, Principal principal) {
-        Users user = userRepository.findUserByEmail(principal.getName()).orElseThrow(() ->
-                new ResourceNotFoundException("User Not Found"));
+        Users user = userRepository.findUserByEmailAndIsVerified(principal.getName()).orElseThrow(() ->
+                new BadRequestException("User Email not verified yet."));
 
         bookDto.setSlug(checkAndCreateSlug(bookDto));
 
