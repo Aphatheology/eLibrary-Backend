@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 
@@ -66,7 +67,7 @@ public class BookService {
     }
 
     public BookResponseDto createBook(BookDto bookDto, Principal principal) {
-        Users user = userRepository.findUserByEmailAndIsVerified(principal.getName()).orElseThrow(() ->
+        Users user = userRepository.findUserByEmailAndIsVerified(principal.getName(), true).orElseThrow(() ->
                 new BadRequestException("User Email not verified yet."));
 
         bookDto.setSlug(checkAndCreateSlug(bookDto));
@@ -122,7 +123,7 @@ public class BookService {
         Users user = userRepository.findUserByEmail(principal.getName()).orElseThrow(() ->
                 new ResourceNotFoundException("User Not Found"));
 
-        if (book.getUploadedBy().getId() != user.getId() && user.getRole() != Role.ADMIN ) {
+        if (!Objects.equals(book.getUploadedBy().getId(), user.getId()) && user.getRole() != Role.ADMIN ) {
             throw new AccessDeniedException("Access denied");
         }
         return book;
